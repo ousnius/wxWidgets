@@ -321,7 +321,7 @@ wxColour wxDarkModeSettings::GetColour(wxSystemColour index)
             return wxColour(isWindows10 ? 0x202020 : 0x191919);
 
         case wxSYS_COLOUR_INFOBK:
-            return wxColour(isWindows10 ? 0x2b2b2b : 0x2a2a2a);
+            return wxColour(isWindows10 ? 0x2b2b2b : 0x2e2e2e);
 
         case wxSYS_COLOUR_BTNTEXT:
         case wxSYS_COLOUR_CAPTIONTEXT:
