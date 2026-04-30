@@ -623,3 +623,30 @@ wxString wxNativeFontInfo::ToUserString() const
 {
     return ToString();
 }
+
+// ----------------------------------------------------------------------------
+// Support for adding private fonts
+// ----------------------------------------------------------------------------
+
+#if wxUSE_PRIVATE_FONTS
+
+#include "wx/fontenum.h"
+
+#include <QtGui/QFontDatabase>
+
+bool wxFontBase::AddPrivateFont(const wxString& strFilename)
+{
+    const int iFontID =
+        QFontDatabase::addApplicationFont( wxQtConvertString(strFilename) );
+    if ( iFontID == -1 )
+        return false;
+
+    // Ensure that the face names defined by private fonts are recognized by
+    // our SetFaceName() which uses wxFontEnumerator to check if the name is in
+    // the list of available faces.
+    wxFontEnumerator::InvalidateCache();
+
+    return true;
+}
+
+#endif // wxUSE_PRIVATE_FONTS
