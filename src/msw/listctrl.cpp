@@ -845,6 +845,24 @@ bool wxListCtrl::SetColumnWidth(int col, int width)
     else if ( width == wxLIST_AUTOSIZE_USEHEADER)
         width = LVSCW_AUTOSIZE_USEHEADER;
 
+    if ( m_inResize )
+    {
+        // Changing column width while handling WM_SIZE seems to be break
+        // something inside the native control, resulting in it not redrawing
+        // at all any longer in some circumstances, see #26394, so defer the
+        // call until resizing is done.
+        CallAfter([this, col, width]()
+        {
+            // This is a recursive call but it shouldn't recurse for ever (or,
+            // normally, more than once) as m_inResize should be reset "soon".
+            SetColumnWidth(col, width);
+        });
+
+        // Optimistically assume setting the column width later will succeed:
+        // better this than returning a bogus failure.
+        return true;
+    }
+
     if ( !ListView_SetColumnWidth(GetHwnd(), col, width) )
         return false;
 
@@ -3782,7 +3800,13 @@ wxListCtrl::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
             // so just ignore them
             if ( (HWND)wParam == ListView_GetHeader(GetHwnd()) )
                 return 0;
-            //else: break
+            break;
+
+        case WM_SIZE:
+            m_inResize++;
+            auto const rc = wxListCtrlBase::MSWWindowProc(nMsg, wParam, lParam);
+            m_inResize--;
+            return rc;
     }
 
     return wxListCtrlBase::MSWWindowProc(nMsg, wParam, lParam);
