@@ -618,6 +618,8 @@ bool wxICOResourceHandler::LoadIcon(wxIcon *icon,
         desiredHeight = 0;
     }
 
+    bool iconMayBeScaled = false;
+
     // try to load the icon from this program first to allow overriding the
     // standard icons (although why one would want to do it considering that
     // we already have wxApp::GetStdIcon() is unclear)
@@ -635,13 +637,15 @@ bool wxICOResourceHandler::LoadIcon(wxIcon *icon,
         else // We may still succeed in loading the standard icon.
         {
             const auto& entry = stdIcons[nStdIcon];
-            hicon = (HICON)::LoadImage((HINSTANCE)nullptr, entry.id, IMAGE_ICON,
-                                       desiredWidth, desiredHeight,
-                                       LR_DEFAULTSIZE | LR_DEFAULTCOLOR);
+            hicon = ::LoadIcon((HINSTANCE)nullptr, entry.id);
             if ( !hicon )
             {
-                wxLogLastError(wxString::Format("LoadImage(%s)", entry.name));
+                wxLogLastError(wxString::Format("LoadIcon(%s)", entry.name));
             }
+
+            // LoadIcon() may scale the icon in high DPI, so get its actual
+            // size below.
+            iconMayBeScaled = true;
         }
     }
 
@@ -649,17 +653,22 @@ bool wxICOResourceHandler::LoadIcon(wxIcon *icon,
         return false;
 
     wxSize size;
+    double scale = 1.0;
     if ( hasSize )
     {
         size.x = desiredWidth;
         size.y = desiredHeight;
     }
-    else
+    else if ( iconMayBeScaled )
     {
+        // LoadIcon() returns icons of scaled size, so we must use the correct
+        // scaling factor of them.
         size = wxGetHiconSize(hicon);
+        if ( const wxWindow* win = wxApp::GetMainTopWindow() )
+            scale = win->GetDPIScaleFactor();
     }
 
-    return icon->InitFromHICON((WXHICON)hicon, size.x, size.y);
+    return icon->InitFromHICON((WXHICON)hicon, size.x, size.y, scale);
 }
 
 #if wxUSE_PNG_RESOURCE_HANDLER
