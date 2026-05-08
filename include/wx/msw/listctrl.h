@@ -469,6 +469,12 @@ private:
     // Object using for header custom drawing if necessary, may be null.
     wxMSWHeaderCtrlCustomDraw* m_headerCustomDraw;
 
+    // Non-zero while we're handling WM_SIZE. This is a counter and not a bool
+    // to account for the possibility of nested WM_SIZE messages, as it looks
+    // like it might happen if a wxEVT_SIZE handler does something that causes
+    // another WM_SIZE to be generated.
+    int m_inResize = 0;
+
 
     wxDECLARE_DYNAMIC_CLASS(wxListCtrl);
     wxDECLARE_EVENT_TABLE();

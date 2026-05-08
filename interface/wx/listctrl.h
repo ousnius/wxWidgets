@@ -1104,6 +1104,12 @@ public:
 
         In small or normal icon view, @a col must be -1, and the column width is set
         for all columns.
+
+        @note In wxMSW, the width of the column may not change immediately when
+            calling this function from wxEVT_SIZE handler due to the native
+            control limitations and calling GetColumnWidth() immediately after
+            SetColumnWidth() may still return the old width. The width is
+            still guaranteed to be updated after the event handler returns.
     */
     bool SetColumnWidth(int col, int width);
 
