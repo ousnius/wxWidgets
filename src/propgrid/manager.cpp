@@ -628,16 +628,18 @@ bool wxPropertyGridManager::Create( wxWindow *parent,
     if ( !m_pPropGrid )
         m_pPropGrid = CreatePropertyGrid();
 
-    bool res = wxPanel::Create( parent, id, pos, size,
-                                (style & wxWINDOW_STYLE_MASK)|wxWANTS_CHARS,
-                                name );
+    if ( !wxPanel::Create( parent, id, pos, size,
+                           (style & wxWINDOW_STYLE_MASK)|wxWANTS_CHARS,
+                           name ) )
+        return false;
+
     Init2(style);
 
     SetInitialSize(size);
     // Create controls
     RecreateControls();
 
-    return res;
+    return true;
 }
 
 // -----------------------------------------------------------------------
