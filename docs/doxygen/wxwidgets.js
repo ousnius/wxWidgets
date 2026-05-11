@@ -34,7 +34,11 @@ $(function() {
 
   var display = getCookie('sectionDiv.style.display');
   if ( display == '' || display == 'block' ) {
-    $('div.dynheader').each(function() { toggleVisibility(this); });
+    $('div.dynheader').each(function() {
+      if (typeof toggleVisibility === 'function') {
+        toggleVisibility(this);
+      }
+    });
     setCookie('sectionDiv.style.display', 'block');
   }
 

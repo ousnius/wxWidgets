@@ -77,6 +77,7 @@ export GENERATE_HTMLHELP="NO"
 export GENERATE_LATEX="NO"
 export GENERATE_QHP="NO"
 export GENERATE_XML="NO"
+export HTML_CODE_FOLDING="YES"
 export SEARCHENGINE="NO"
 export SERVER_BASED_SEARCH="NO"
 
@@ -90,6 +91,7 @@ case "$1" in
     chm)
         export GENERATE_HTML="YES"
         export GENERATE_HTMLHELP="YES"
+        export HTML_CODE_FOLDING="NO"
         ;;
     docset)
         export GENERATE_DOCSET="YES"
