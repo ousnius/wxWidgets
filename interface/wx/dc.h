@@ -703,8 +703,9 @@ public:
         @a externalLeading is any extra vertical space added to the font by the
         font designer (usually is zero).
 
-        The text extent is returned in @a w and @a h pointers or as a wxSize
-        object depending on which version of this function is used.
+        The text extent is returned in @a w and @a h pointers (if they are
+        non-@NULL) or as a wxSize object depending on which version of this
+        function is used.
 
         If the optional parameter @a font is specified and valid, then it is
         used for the text extent calculation. Otherwise the currently selected

@@ -2325,9 +2325,11 @@ public:
         @param string
             String whose extent is to be measured.
         @param w
-            Return value for width.
+            Return value for width. May be @NULL if the caller is not
+            interested in it.
         @param h
-            Return value for height.
+            Return value for height. May be @NULL if the caller is not
+            interested in it.
         @param descent
             Return value for descent (optional).
         @param externalLeading
